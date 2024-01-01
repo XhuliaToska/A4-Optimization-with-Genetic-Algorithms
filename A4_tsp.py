@@ -67,3 +67,38 @@ def tournament_selection(population, fitness_values, tournament_size=5):
     tournament_fitness = [fitness_values[i] for i in tournament_indices]
     selected_index = tournament_indices[tournament_fitness.index(max(tournament_fitness))]
     return population[selected_index]
+    
+# Crossover Techniques
+
+def order_crossover(parent1, parent2):
+    start, end = sorted(random.sample(range(len(parent1)), 2))
+    offspring = [-1] * len(parent1)
+
+## Copy the segment from parent1 to the offspring
+    offspring[start:end] = parent1[start:end]
+
+## Fill in the remaining positions from parent2
+    remaining_positions = [i for i in parent2 if i not in offspring]
+    remaining_positions += remaining_positions[:start] + remaining_positions[end:]   
+
+    for i in range(len(parent1)):
+        if offspring[i] == -1:
+            offspring[i] = remaining_positions.pop(0)
+
+    return offspring
+
+def partially_mapped_crossover(parent1, parent2):
+    start, end = sorted(random.sample(range(len(parent1)), 2))
+    offspring = [-1] * len(parent1)
+## Copy the segment from parent1 to the offspring
+    offspring[start:end] = parent1[start:end]
+
+## Fill in the remaining positions from parent2
+    for i in range(len(parent1)):
+        if offspring[i] == -1:
+            current_gene = parent2[i]
+            while current_gene in offspring:
+                current_gene = parent2[parent1.index(current_gene)]
+            offspring[i] = current_gene
+
+    return offspring
